@@ -180,9 +180,9 @@ class _ImagePixelReducerState extends State<ImagePixelReducer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pixel Reducer')),
+      appBar: AppBar(title: const Text('Seed Beads Art Creator')),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(4),
         child: Column(
           children: [
             Text(
@@ -214,15 +214,6 @@ class _ImagePixelReducerState extends State<ImagePixelReducer> {
               },
               child: const Text('Print Pixels'),
             ),
-            // Expanded(
-            //   child: SingleChildScrollView(
-            //     scrollDirection: Axis.vertical,
-            //     child: SingleChildScrollView(
-            //       scrollDirection: Axis.horizontal,
-            //       child: ColorMatrixDisplay(colorMatrix: colorMatrix1),
-            //     ),
-            //   ),
-            // ),
             Slider(
               min: 10,
               max: 300,
@@ -238,11 +229,11 @@ class _ImagePixelReducerState extends State<ImagePixelReducer> {
             ),
             const SizedBox(height: 10),
             if (reducedImage != null)
-              Expanded(
-                child: Center(
+              Center(
+                child: InteractiveViewer(
                   child: CustomPaint(
                     painter: PixelPainter(reducedImage!),
-                    size: Size(500, (500 * (reducedHeight / reducedWidth))),
+                    size: Size(300, (300 * (reducedHeight / reducedWidth))),
                   ),
                 ),
               ),
