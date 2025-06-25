@@ -39,7 +39,12 @@ dependencies:
   syncfusion_flutter_pdfviewer:
   printing:
   path_provider:
+  pdf_render:
   pdf_to_image_converter:
+  get: ^4.7.2
+  shared_preferences: ^2.5.3
+  http: ^1.4.0
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
