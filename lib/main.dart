@@ -1,919 +1,11 @@
-// // import 'package:flutter/material.dart';
-// // import 'package:seed_beats/views/home_ui.dart';
-// // import 'package:http/http.dart' as http;
-// //
-// // Future<void> main() async {
-// //   runApp(const HomeUi());
-// // }
-// //
-// // / reduce quality with border----------------------------------------------------------------
-// //
-// // import 'package:flutter/material.dart';
-// // import 'package:flutter/services.dart';
-// // import 'package:image/image.dart' as img;
-// // import 'package:flutter/services.dart' show rootBundle;
-// //
-// //
-// // void main() {
-// //   runApp(const MaterialApp(home: ImagePixelReducer()));
-// // }
-// //
-// // class ImagePixelReducer extends StatefulWidget {
-// //   const ImagePixelReducer({super.key});
-// //
-// //   @override
-// //   State<ImagePixelReducer> createState() => _ImagePixelReducerState();
-// // }
-// //
-// // class _ImagePixelReducerState extends State<ImagePixelReducer> {
-// //   img.Image? reducedImage;
-// //   double reducedWidth = 50;
-// //   int reducedHeight = 0;
-// //   late img.Image original;
-// //
-// //   @override
-// //   void initState() {
-// //     super.initState();
-// //     loadAndReduceImage();
-// //   }
-// //
-// //   Future<void> loadAndReduceImage() async {
-// //     final byteData = await rootBundle.load("assets/download.jpg");
-// //     final bytes = byteData.buffer.asUint8List();
-// //     original = img.decodeImage(bytes)!;
-// //     await reduceImage();
-// //   }
-// //
-// //   Future<void> reduceImage() async {
-// //     final aspectRatio = original.width / original.height;
-// //     reducedHeight = (reducedWidth / aspectRatio).round();
-// //     final resized = img.copyResize(original,
-// //         width: reducedWidth.round(), height: reducedHeight);
-// //     setState(() {
-// //       reducedImage = resized;
-// //     });
-// //   }
-// //
-// //   List<List<List<int>>> colorMatrix1 = [];
-// //
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Scaffold(
-// //       appBar: AppBar(title: const Text('Seed Beads Art Creator')),
-// //       body: Padding(
-// //         padding: const EdgeInsets.all(4),
-// //         child: Column(
-// //           children: [
-// //             Text(
-// //               'Width: ${reducedWidth.round()} px, Height: $reducedHeight px',
-// //               style: const TextStyle(fontSize: 18),
-// //             ),
-// //             ElevatedButton(
-// //               onPressed: () {
-// //                 if (reducedImage != null) {
-// //                   List<List<List<int>>> list = [];
-// //                   for (int y = 0; y < reducedImage!.height; y++) {
-// //                     List<List<int>> listTemp = [];
-// //                     for (int x = 0; x < reducedImage!.width; x++) {
-// //                       final pixel = reducedImage!.getPixel(x, y);
-// //                       List<int> temp = [];
-// //                       temp.add(pixel.r.toInt());
-// //                       temp.add(pixel.g.toInt());
-// //                       temp.add(pixel.b.toInt());
-// //                       listTemp.add (temp);
-// //                     }
-// //                     list.add(listTemp);
-// //                   }
-// //                   colorMatrix1 = list;
-// //                   print(list);
-// //                 }
-// //                 setState(() {
-// //
-// //                 });
-// //               },
-// //               child: const Text('Print Pixels'),
-// //             ),
-// //             Slider(
-// //               min: 10,
-// //               max: 300,
-// //               divisions: 29,
-// //               value: reducedWidth,
-// //               label: reducedWidth.round().toString(),
-// //               onChanged: (value) async {
-// //                 setState(() {
-// //                   reducedWidth = value;
-// //                 });
-// //                 await reduceImage();
-// //               },
-// //             ),
-// //             const SizedBox(height: 10),
-// //             if (reducedImage != null)
-// //               Center(
-// //                 child: InteractiveViewer(
-// //                   child: CustomPaint(
-// //                     painter: PixelPainter(reducedImage!),
-// //                     size: Size(320, (320 * (reducedHeight / reducedWidth))),
-// //                   ),
-// //                 ),
-// //               ),
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   }
-// //
-// // }
-// //
-// // class PixelPainter extends CustomPainter {
-// //   final img.Image image;
-// //
-// //   PixelPainter(this.image);
-// //
-// //   @override
-// //   void paint(Canvas canvas, Size size) {
-// //     final paint = Paint();
-// //     final borderPaint = Paint()
-// //       ..style = PaintingStyle.stroke
-// //       ..color = Colors.black
-// //       ..strokeWidth = 0.2;
-// //
-// //     final pixelWidth = size.width / image.width;
-// //     final pixelHeight = size.height / image.height;
-// //
-// //     for (int y = 0; y < image.height; y++) {
-// //       for (int x = 0; x < image.width; x++) {
-// //         final pixel = image.getPixel(x, y); // returns a Pixel object
-// //
-// //         final r = pixel.r;
-// //         final g = pixel.g;
-// //         final b = pixel.b;
-// //         final a = pixel.a;
-// //
-// //         paint.color = Color.fromARGB(a.toInt(), r.toInt(), g.toInt(), b.toInt());
-// //
-// //         final rect = Rect.fromLTWH(
-// //           x * pixelWidth,
-// //           y * pixelHeight,
-// //           pixelWidth,
-// //           pixelHeight,
-// //         );
-// //
-// //         canvas.drawRect(rect, paint);        // Fill pixel
-// //         canvas.drawRect(rect, borderPaint);  // Draw thin border
-// //       }
-// //     }
-// //   }
-// //
-// //   @override
-// //   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-// // }
-// // //-----------------------------------------
-// // class ColorMatrixDisplay extends StatelessWidget {
-// //
-// //   final List<List<List<int>>> colorMatrix;
-// //   ColorMatrixDisplay({super.key, required this.colorMatrix});
-// //
-// //   // Example 2D matrix of colors (r, g, b)
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return  Center(
-// //       child: Column(
-// //         mainAxisSize: MainAxisSize.min,
-// //         children: colorMatrix.map((row) {
-// //           return Row(
-// //             mainAxisSize: MainAxisSize.min,
-// //             children: row.map((rgb) {
-// //               final color = Color.fromARGB(255, rgb[0], rgb[1], rgb[2]);
-// //               return
-// //                 CircleAvatar(
-// //                   radius: 6,
-// //                   backgroundColor: color,
-// //                   child: Image.asset("assets/seed bead-modified.png"),
-// //                 );
-// //             }).toList(),
-// //           );
-// //         }).toList(),
-// //       ),
-// //     );
-// //   }
-// // }
-// //
-// // / creating image and downloading it---------------------------------------------------------------
-//
-// import 'dart:typed_data'; // For Uint8List
-// import 'dart:ui' as ui; // For ui.Image, ui.Canvas, ui.PictureRecorder etc.
-// import 'dart:convert'; // For base64Encode
-//
-// import 'package:flutter/material.dart';
-// import 'package:flutter/foundation.dart'; // For kIsWeb
-//
-// // Conditional import for dart:html (only available on web)
-// import 'dart:html' as html;
-// import 'dart:math';
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Generate & Download Image',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: const ImageGeneratorScreen(),
-//     );
-//   }
-// }
-//
-// class ImageGeneratorScreen extends StatefulWidget {
-//   const ImageGeneratorScreen({super.key});
-//
-//   @override
-//   _ImageGeneratorScreenState createState() => _ImageGeneratorScreenState();
-// }
-//
-// class _ImageGeneratorScreenState extends State<ImageGeneratorScreen> {
-//
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     circleColorsGrid = generateRandomColorGrid(200);
-//   }
-//   bool _isGenerating = false; // State to show loading indicator
-//   List<List<Color>> generateRandomColorGrid(int size) {
-//     final random = Random();
-//     return List.generate(size, (_) {
-//       return List.generate(size, (_) {
-//         // Generate a random opaque color
-//         return Color.fromARGB(
-//           255,
-//           random.nextInt(256),
-//           random.nextInt(256),
-//           random.nextInt(256),
-//         );
-//       });
-//     });
-//   }
-//   // Define your 2D list of colors (can be bulk)
-//   List<List<Color>> circleColorsGrid = [];
-//   static const double _circleTileSize = 25.0; // Defines the size of each circle tile in the generated image
-//
-//   /// Generates the image from the 2D color grid directly onto an off-screen canvas.
-//   Future<Uint8List> _generateImageFromColors(
-//       List<List<Color>> gridColors, double tileSize) async {
-//     final int numRows = gridColors.length;
-//     final int numCols = gridColors[0].length; // Assuming all rows have same number of columns
-//
-//     final double imageWidth = numCols * tileSize;
-//     final double imageHeight = numRows * tileSize;
-//
-//     // Create a PictureRecorder to record drawing commands
-//     final ui.PictureRecorder recorder = ui.PictureRecorder();
-//     // Create a Canvas to draw on
-//     final ui.Canvas canvas =
-//     ui.Canvas(recorder, ui.Rect.fromLTWH(0, 0, imageWidth, imageHeight));
-//
-//     // Fill the entire canvas with a background color (e.g., white)
-//     canvas.drawRect(
-//         ui.Rect.fromLTWH(0, 0, imageWidth, imageHeight), Paint()..color = Colors.white);
-//
-//     // Iterate through the 2D array and draw each circle
-//     for (int r = 0; r < numRows; r++) {
-//       for (int c = 0; c < numCols; c++) {
-//         final Color outerColor = gridColors[r][c];
-//
-//         // Calculate the top-left corner of the current tile
-//         final double tileLeft = c * tileSize;
-//         final double tileTop = r * tileSize;
-//
-//         // Calculate the center of the current tile
-//         final Offset center = Offset(tileLeft + tileSize / 2, tileTop + tileSize / 2);
-//
-//         // Determine the maximum possible radius for a circle to fit perfectly in the tile
-//         final double maxRadius = tileSize / 2;
-//
-//         // --- Outer Circle ---
-//         final double outerCircleRadius = maxRadius * 0.95; // Fills the entire tile
-//         final Paint outerPaint = Paint()
-//           ..color = outerColor
-//           ..style = PaintingStyle.fill;
-//         canvas.drawCircle(center, outerCircleRadius, outerPaint);
-//
-//         // --- Inner White Circle (1/3 ratio of the outer circle's radius) ---
-//         final double innerCircleRadius = outerCircleRadius / 3;
-//         final Paint innerPaint = Paint()
-//           ..color = Colors.white
-//           ..style = PaintingStyle.fill;
-//         canvas.drawCircle(center, innerCircleRadius, innerPaint);
-//       }
-//     }
-//
-//     // End recording and get the Picture
-//     final ui.Picture picture = recorder.endRecording();
-//
-//     // Convert the Picture to an Image
-//     // Use a higher pixelRatio if you want a higher resolution image
-//     final ui.Image img = await picture.toImage(imageWidth.toInt(), imageHeight.toInt());
-//
-//     // Convert the Image to ByteData in PNG format
-//     final ByteData? byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-//
-//     if (byteData == null) {
-//       throw Exception('Failed to convert image to bytes.');
-//     }
-//
-//     return byteData.buffer.asUint8List();
-//   }
-//
-//   /// Handles the button click: shows loading, generates image, and downloads it.
-//   Future<void> _processAndDownloadImage() async {
-//     setState(() {
-//       _isGenerating = true;
-//     });
-//     await Future.delayed(Duration.zero);
-//     try {
-//       // Process: Generate the image
-//       final Uint8List pngBytes =
-//       await _generateImageFromColors(circleColorsGrid, _circleTileSize);
-//
-//       // Download: Web-specific logic
-//       if (kIsWeb) {
-//         final base64data = base64Encode(pngBytes);
-//         final fileName = 'circle_grid_${DateTime.now().millisecondsSinceEpoch}.png';
-//
-//         final anchor = html.AnchorElement(
-//           href: 'data:image/png;base64,$base64data',
-//         )..setAttribute('download', fileName);
-//
-//         html.document.body?.append(anchor);
-//         anchor.click();
-//         anchor.remove();
-//
-//         if (mounted) {
-//           ScaffoldMessenger.of(context).showSnackBar(
-//             SnackBar(content: Text('Image "$fileName" downloaded successfully!')),
-//           );
-//         }
-//       } else {
-//         if (mounted) {
-//           ScaffoldMessenger.of(context).showSnackBar(
-//             const SnackBar(content: Text('Downloading is only supported on web in this example.')),
-//           );
-//         }
-//       }
-//     } catch (e) {
-//       if (mounted) {
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text('Error generating or downloading image: $e')),
-//         );
-//       }
-//       print('Error generating or downloading image: $e');
-//     } finally {
-//       setState(() {
-//         _isGenerating = false; // Hide loading indicator
-//       });
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Generate & Download Image'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             if (_isGenerating)
-//               const Padding(
-//                 padding: EdgeInsets.all(20.0),
-//                 child: Column(
-//                   children: [
-//                     // CircularProgressIndicator(),
-//                     // SizedBox(height: 10),
-//                     Text('Processing image...'),
-//                   ],
-//                 ),
-//               )
-//             else
-//               ElevatedButton(
-//                 onPressed: _processAndDownloadImage,
-//                 child: const Text('Generate and Download Image'),
-//               ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-//
-// // ------------------------------------------------old versions--------------------------------------------------
-// //
-// // import 'dart:typed_data';
-// // import 'dart:ui' as ui;
-// // import 'dart:convert';
-// //
-// // import 'package:flutter/material.dart';
-// // import 'package:flutter/rendering.dart';
-// // import 'package:flutter/foundation.dart';
-// //
-// // import 'dart:html' as html;
-// //
-// //
-// // void main() {
-// //   runApp(const MyApp());
-// // }
-// //
-// // class MyApp extends StatelessWidget {
-// //   const MyApp({super.key});
-// //
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return MaterialApp(
-// //       title: '2D Circle Grid Download',
-// //       theme: ThemeData(
-// //         primarySwatch: Colors.blue,
-// //       ),
-// //       home: const SmoothCircleGridScreen(),
-// //     );
-// //   }
-// // }
-// //
-// // class SmoothCircleGridScreen extends StatefulWidget {
-// //   const SmoothCircleGridScreen({super.key});
-// //
-// //   @override
-// //   _SmoothCircleGridScreenState createState() => _SmoothCircleGridScreenState();
-// // }
-// //
-// // class _SmoothCircleGridScreenState extends State<SmoothCircleGridScreen> {
-// //   final GlobalKey _gridKey = GlobalKey();
-// //
-// //   final List<List<Color>> _circleColorsGrid = [
-// //     [Colors.red, Colors.green, Colors.blue, Colors.purple],
-// //     [Colors.orange, Colors.teal, Colors.pink, Colors.brown],
-// //     [Colors.amber, Colors.cyan, Colors.indigo, Colors.lime],
-// //     [Colors.red, Colors.green, Colors.blue, Colors.purple],
-// //   ];
-// //
-// //   static const double _circleTileSize = 10.0;
-// //
-// //   Future<void> _captureAndDownloadImage() async {
-// //     try {
-// //       RenderRepaintBoundary? boundary =
-// //       _gridKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
-// //
-// //       if (boundary == null) {
-// //         if (mounted) {
-// //           ScaffoldMessenger.of(context).showSnackBar(
-// //             const SnackBar(content: Text('Could not find render object.')),
-// //           );
-// //         }
-// //         return;
-// //       }
-// //
-// //       ui.Image image = await boundary.toImage(pixelRatio: 2.0);
-// //
-// //       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-// //       if (byteData == null) {
-// //         if (mounted) {
-// //           ScaffoldMessenger.of(context).showSnackBar(
-// //             const SnackBar(content: Text('Failed to convert image to bytes.')),
-// //           );
-// //         }
-// //         return;
-// //       }
-// //
-// //       Uint8List pngBytes = byteData.buffer.asUint8List();
-// //
-// //       if (kIsWeb) {
-// //         final base64data = base64Encode(pngBytes);
-// //         final fileName = 'circle_grid_${DateTime.now().millisecondsSinceEpoch}.png';
-// //
-// //         final anchor = html.AnchorElement(
-// //           href: 'data:image/png;base64,$base64data',
-// //         )..setAttribute('download', fileName);
-// //
-// //         html.document.body?.append(anchor);
-// //         anchor.click();
-// //         anchor.remove();
-// //
-// //         if (mounted) {
-// //           ScaffoldMessenger.of(context).showSnackBar(
-// //             SnackBar(content: Text('Image "$fileName" downloaded successfully!')),
-// //           );
-// //         }
-// //       } else {
-// //         if (mounted) {
-// //           ScaffoldMessenger.of(context).showSnackBar(
-// //             const SnackBar(content: Text('Downloading is only supported on web in this example.')),
-// //           );
-// //         }
-// //       }
-// //     } catch (e) {
-// //       if (mounted) {
-// //         ScaffoldMessenger.of(context).showSnackBar(
-// //           SnackBar(content: Text('Error capturing or downloading image: $e')),
-// //         );
-// //       }
-// //       print('Error capturing or downloading image: $e');
-// //     }
-// //   }
-// //
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Scaffold(
-// //       appBar: AppBar(
-// //         title: const Text('2D Circle Grid (No Padding)'),
-// //       ),
-// //       body: Center(
-// //         child: Column(
-// //           mainAxisAlignment: MainAxisAlignment.center,
-// //           children: [
-// //             // RepaintBoundary captures the visual output of its child
-// //             RepaintBoundary(
-// //               key: _gridKey,
-// //               // The white background is moved here to ensure the captured image has a background
-// //               // If you want a transparent background, change this to Colors.transparent
-// //               child: Container(
-// //                 color: Colors.white,
-// //                 child: Column(
-// //                   mainAxisAlignment: MainAxisAlignment.center,
-// //                   // We use MainAxisSize.min to ensure the Column only takes up as much space as its children
-// //                   mainAxisSize: MainAxisSize.min,
-// //                   children: _circleColorsGrid.map((rowColors) {
-// //                     return Row(
-// //                       mainAxisAlignment: MainAxisAlignment.center,
-// //                       mainAxisSize: MainAxisSize.min,
-// //                       children: rowColors.map((color) {
-// //                         // The Container no longer has margin or decoration (border)
-// //                         return Container(
-// //                           width: _circleTileSize,
-// //                           height: _circleTileSize,
-// //                           child: CustomPaint(
-// //                             painter: CircleRatioPainter(outerCircleColor: color),
-// //                           ),
-// //                         );
-// //                       }).toList(),
-// //                     );
-// //                   }).toList(),
-// //                 ),
-// //               ),
-// //             ),
-// //             // The SizedBox for spacing is removed
-// //             ElevatedButton(
-// //               onPressed: _captureAndDownloadImage,
-// //               child: const Text('Download Grid as Image (Web Only)'),
-// //             ),
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   }
-// // }
-// //
-// // // Our CustomPainter class remains exactly the same
-// // class CircleRatioPainter extends CustomPainter {
-// //   final Color outerCircleColor;
-// //
-// //   CircleRatioPainter({required this.outerCircleColor});
-// //
-// //   @override
-// //   void paint(Canvas canvas, Size size) {
-// //     final Offset center = Offset(size.width / 2, size.height / 2);
-// //     final double maxRadius = size.shortestSide / 2;
-// //
-// //     final double outerCircleRadius = maxRadius;
-// //     final Paint outerPaint = Paint()
-// //       ..color = outerCircleColor
-// //       ..style = PaintingStyle.fill;
-// //     canvas.drawCircle(center, outerCircleRadius, outerPaint);
-// //
-// //     final double innerCircleRadius = outerCircleRadius / 3;
-// //     final Paint innerPaint = Paint()
-// //       ..color = Colors.white
-// //       ..style = PaintingStyle.fill;
-// //     canvas.drawCircle(center, innerCircleRadius, innerPaint);
-// //   }
-// //
-// //   @override
-// //   bool shouldRepaint(covariant CircleRatioPainter oldDelegate) {
-// //     return oldDelegate.outerCircleColor != outerCircleColor;
-// //   }
-// // }
-// import 'package:flutter/material.dart';
-// import 'dart:math'; // For min and max functions
-//
-// void main() {
-//   runApp(const ColorDisplayApp());
-// }
-//
-// class ColorDisplayApp extends StatelessWidget {
-//   const ColorDisplayApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Hex Color Display',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//         visualDensity: VisualDensity.adaptivePlatformDensity,
-//         fontFamily: 'Inter', // Using Inter font as per instructions
-//       ),
-//       home: const ColorListPage(),
-//     );
-//   }
-// }
-//
-// class ColorListPage extends StatefulWidget {
-//   const ColorListPage({super.key});
-//
-//   @override
-//   State<ColorListPage> createState() => _ColorListPageState();
-// }
-//
-// class _ColorListPageState extends State<ColorListPage> {
-//   final TextEditingController _hexInputController = TextEditingController();
-//   final List<ColorItem> _colorItems = [];
-//
-//   // Function to parse and validate a single hex code
-//   Color? _parseHexColor(String hexString) {
-//     String formattedHex = hexString.trim().toUpperCase();
-//
-//     // Remove '#' if present
-//     if (formattedHex.startsWith('#')) {
-//       formattedHex = formattedHex.substring(1);
-//     }
-//
-//     // Check if it's a valid 6-digit hex code
-//     if (formattedHex.length == 6 && RegExp(r'^[0-9A-F]{6}$').hasMatch(formattedHex)) {
-//       try {
-//         // Add FF for full opacity (ARGB format)
-//         return Color(int.parse('FF$formattedHex', radix: 16));
-//       } catch (e) {
-//         // Handle parsing errors, though regex should prevent most
-//         print('Error parsing hex: $hexString, Error: $e');
-//         return null;
-//       }
-//     }
-//     return null;
-//   }
-//
-//   // Helper function to convert RGB to HSV for sorting
-//   // Returns a list [h, s, v] where h is 0-360, s and v are 0-1
-//   List<double> _rgbToHsv(Color color) {
-//     double r = color.red / 255.0;
-//     double g = color.green / 255.0;
-//     double b = color.blue / 255.0;
-//
-//     double maxVal = max(max(r, g), b);
-//     double minVal = min(min(r, g), b);
-//     double delta = maxVal - minVal;
-//
-//     double h = 0.0;
-//     double s = 0.0;
-//     double v = maxVal; // Value is simply the maximum component
-//
-//     if (maxVal != 0.0) {
-//       s = delta / maxVal; // Saturation
-//     }
-//
-//     if (delta != 0.0) {
-//       if (maxVal == r) {
-//         h = (g - b) / delta + (g < b ? 6 : 0);
-//       } else if (maxVal == g) {
-//         h = (b - r) / delta + 2;
-//       } else {
-//         h = (r - g) / delta + 4;
-//       }
-//       h /= 6.0; // Convert to 0-1 range
-//     }
-//
-//     return [h * 360, s, v]; // Hue in degrees (0-360), Saturation 0-1, Value 0-1
-//   }
-//
-//   // Function to add colors from the input field
-//   void _addColorsFromInput() {
-//     final String input = _hexInputController.text;
-//     if (input.isEmpty) {
-//       _showMessage('Please enter hex codes.', Colors.orange);
-//       return;
-//     }
-//
-//     // Split by common delimiters: comma, space, newline
-//     final List<String> hexStrings = input
-//         .split(RegExp(r'[,\s\n]+'))
-//         .where((s) => s.isNotEmpty)
-//         .toList();
-//
-//     bool anyAdded = false;
-//     for (String hexStr in hexStrings) {
-//       final Color? color = _parseHexColor(hexStr);
-//       if (color != null) {
-//         // Check if the color already exists to avoid duplicates
-//         if (!_colorItems.any((item) => item.color == color)) {
-//           setState(() {
-//             _colorItems.add(ColorItem(color: color, hexCode: '#${hexStr.toUpperCase()}'));
-//           });
-//           anyAdded = true;
-//         }
-//       } else {
-//         print('Invalid hex code skipped: $hexStr');
-//       }
-//     }
-//
-//     if (anyAdded) {
-//       // Sort the list after adding new colors based on HSV
-//       setState(() {
-//         _colorItems.sort((a, b) {
-//           List<double> hsvA = _rgbToHsv(a.color);
-//           List<double> hsvB = _rgbToHsv(b.color);
-//
-//           // Sort primarily by Hue (0-360) - ascending
-//           if (hsvA[0] != hsvB[0]) {
-//             return hsvA[0].compareTo(hsvB[0]);
-//           }
-//           // Then by Value/Brightness (0-1) - descending (brighter first)
-//           if (hsvA[2] != hsvB[2]) {
-//             return hsvB[2].compareTo(hsvA[2]); // Note the reversed comparison for descending
-//           }
-//           // Finally by Saturation (0-1) - descending (more saturated first)
-//           return hsvB[1].compareTo(hsvA[1]); // Note the reversed comparison for descending
-//         });
-//       });
-//       _hexInputController.clear(); // Clear input after adding
-//       _showMessage('Colors added and sorted successfully!', Colors.green);
-//     } else {
-//       _showMessage('No new valid colors found in input or all were duplicates.', Colors.red);
-//     }
-//   }
-//
-//   // Helper function to show snackbar messages
-//   void _showMessage(String message, Color color) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(
-//         content: Text(message),
-//         backgroundColor: color,
-//         duration: const Duration(seconds: 2),
-//         behavior: SnackBarBehavior.floating,
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-//         margin: const EdgeInsets.all(10),
-//       ),
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Hex Color Viewer'),
-//         centerTitle: true,
-//         backgroundColor: Colors.blueAccent,
-//         shape: const RoundedRectangleBorder(
-//           borderRadius: BorderRadius.vertical(
-//             bottom: Radius.circular(20),
-//           ),
-//         ),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           children: [
-//             // Input Section
-//             Container(
-//               padding: const EdgeInsets.all(12.0),
-//               decoration: BoxDecoration(
-//                 color: Colors.white,
-//                 borderRadius: BorderRadius.circular(15.0),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     color: Colors.grey.withOpacity(0.2),
-//                     spreadRadius: 2,
-//                     blurRadius: 5,
-//                     offset: const Offset(0, 3),
-//                   ),
-//                 ],
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.stretch,
-//                 children: [
-//                   TextField(
-//                     controller: _hexInputController,
-//                     decoration: InputDecoration(
-//                       labelText: 'Enter Hex Codes (e.g., #FF0000, 00FF00)',
-//                       hintText: 'Separate by comma, space, or new line',
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(10.0),
-//                         borderSide: BorderSide.none,
-//                       ),
-//                       filled: true,
-//                       fillColor: Colors.grey[100],
-//                       contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-//                     ),
-//                     maxLines: 3,
-//                     keyboardType: TextInputType.multiline,
-//                   ),
-//                   const SizedBox(height: 15),
-//                   ElevatedButton(
-//                     onPressed: _addColorsFromInput,
-//                     style: ElevatedButton.styleFrom(
-//                       backgroundColor: Colors.blueAccent, // Button background color
-//                       foregroundColor: Colors.white, // Text color
-//                       padding: const EdgeInsets.symmetric(vertical: 12),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(10),
-//                       ),
-//                       elevation: 5,
-//                     ),
-//                     child: const Text(
-//                       'Add Colors',
-//                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             const SizedBox(height: 20),
-//             // Display Section
-//             Expanded(
-//               child: _colorItems.isEmpty
-//                   ? Center(
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     Icon(Icons.color_lens_outlined, size: 80, color: Colors.grey[400]),
-//                     const SizedBox(height: 10),
-//                     Text(
-//                       'No colors added yet. Enter hex codes above!',
-//                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-//                       textAlign: TextAlign.center,
-//                     ),
-//                   ],
-//                 ),
-//               )
-//                   : Scrollbar( // Added Scrollbar here
-//                 child: GridView.builder(
-//                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-//                     maxCrossAxisExtent: 10.0, // Max width for each tile (approx 50px)
-//                     crossAxisSpacing: 2.0, // Small spacing between tiles
-//                     mainAxisSpacing: 2.0, // Small spacing between tiles
-//                     childAspectRatio: 1.0, // Makes tiles square (50x50)
-//                   ),
-//                   itemCount: _colorItems.length,
-//                   itemBuilder: (context, index) {
-//                     final ColorItem item = _colorItems[index];
-//                     return ColorCard(item: item);
-//                   },
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-// class ColorItem {
-//   final Color color;
-//   final String hexCode;
-//
-//   ColorItem({required this.color, required this.hexCode});
-// }
-//
-// class ColorCard extends StatelessWidget {
-//   final ColorItem item;
-//
-//   const ColorCard({super.key, required this.item});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       elevation: 1, // Reduced elevation for a flatter look
-//       margin: EdgeInsets.zero, // Remove default card margin
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(4.0), // Slightly rounded corners for tiles
-//         side: BorderSide(color: Colors.grey.shade300, width: 0.5), // Subtle border
-//       ),
-//       child: Container(
-//         decoration: BoxDecoration(
-//           color: item.color,
-//           borderRadius: BorderRadius.circular(4.0),
-//         ),
-//         // No text overlay for fixed 50x50 tiles, as it would be too small.
-//         // If you need to see the hex code, you might consider a hover/tap effect,
-//         // but for a dense grid, it's usually just the color itself.
-//       ),
-//     );
-//   }
-// }
+import 'package:flutter/material.dart';
+import 'package:seed_beats/views/home_ui.dart';
+import 'package:http/http.dart' as http;
+
+Future<void> main() async {
+  runApp(MaterialApp(home: const HomeUi()));
+}
+
 // import 'package:flutter/material.dart';
 // import 'package:collection/collection.dart'; // For more advanced list operations if needed
 //
@@ -1217,127 +309,764 @@
 //     return '#$hex';
 //   }
 // }
-
 // import 'package:flutter/material.dart';
-// import 'dart:math';
+// import 'dart:math' as math;
 //
 // void main() {
-//   runApp(const MaterialApp(home: ColorPatchesDemo()));
+//   runApp(const ColorGridApp());
 // }
 //
-// class ColorPatchesDemo extends StatefulWidget {
-//   const ColorPatchesDemo({super.key});
+// class ColorGridApp extends StatelessWidget {
+//   const ColorGridApp({Key? key}) : super(key: key);
 //
 //   @override
-//   State<ColorPatchesDemo> createState() => _ColorPatchesDemoState();
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Color Circle',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: const ColorInputScreen(),
+//     );
+//   }
 // }
 //
-// class _ColorPatchesDemoState extends State<ColorPatchesDemo> {
-//   List<String> hexColors = [
-//     '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF',
-//     '#FFA500', '#FFFF00', '#800080', '#FFC0CB', '#A52A2A',
-//     '#2E8B57', '#90EE90', '#008000', '#008B8B', '#00CED1',
-//     '#F5F5DC', '#4B0082', '#F08080', '#808080', '#D3D3D3'
-//   ];
-//
-//   List<Color> sortedColors = [];
+// class ColorInputScreen extends StatefulWidget {
+//   const ColorInputScreen({Key? key}) : super(key: key);
 //
 //   @override
-//   void initState() {
-//     super.initState();
-//     _processColors();
-//   }
+//   State<ColorInputScreen> createState() => _ColorInputScreenState();
+// }
 //
-//   void _processColors() {
-//     final Map<String, List<Color>> colorGroups = {};
+// class _ColorInputScreenState extends State<ColorInputScreen> {
+//   final TextEditingController _textEditingController = TextEditingController();
+//   List<String> _inputHexColors = [];
 //
-//     for (var hex in hexColors) {
-//       final color = Color(int.parse('0xFF${hex.substring(1)}'));
-//       final group = _classifyColor(color);
-//       colorGroups.putIfAbsent(group, () => []).add(color);
+//   void _processInput() {
+//     setState(() {
+//       _inputHexColors = _textEditingController.text
+//           .split(',')
+//           .map((s) => s.trim())
+//           .where((s) => s.isNotEmpty && s.startsWith('#') && (s.length == 7 || s.length == 9))
+//           .toList();
+//     });
+//
+//     if (_inputHexColors.isNotEmpty) {
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => ColorCircleDisplayScreen(hexColors: _inputHexColors),
+//         ),
+//       );
+//     } else {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('Please enter valid hex color codes separated by commas.')),
+//       );
 //     }
-//
-//     // Sort each group by brightness
-//     for (var group in colorGroups.entries) {
-//       group.value.sort((a, b) =>
-//           HSVColor.fromColor(a).value.compareTo(HSVColor.fromColor(b).value));
-//     }
-//
-//     // Patch display order
-//     final patchOrder = [
-//       'Black',
-//       'Gray',
-//       'White',
-//       'Red',
-//       'Orange',
-//       'Yellow',
-//       'Dark Green',
-//       'Light Green',
-//       'Teal',
-//       'Blue',
-//       'Purple',
-//       'Pink',
-//       'Brown',
-//     ];
-//
-//     sortedColors = [];
-//
-//     for (var patch in patchOrder) {
-//       if (colorGroups.containsKey(patch)) {
-//         sortedColors.addAll(colorGroups[patch]!);
-//       }
-//     }
-//
-//     setState(() {});
-//   }
-//
-//   String _classifyColor(Color color) {
-//     final hsv = HSVColor.fromColor(color);
-//     final h = hsv.hue;
-//     final s = hsv.saturation;
-//     final v = hsv.value;
-//
-//     if (s < 0.1 && v < 0.2) return 'Black';
-//     if (s < 0.1 && v > 0.85) return 'White';
-//     if (s < 0.1) return 'Gray';
-//
-//     if (h >= 0 && h < 30) return 'Red';
-//     if (h >= 30 && h < 60) return 'Orange';
-//     if (h >= 60 && h < 90) return 'Yellow';
-//     if (h >= 90 && h < 150) return v < 0.5 ? 'Dark Green' : 'Light Green';
-//     if (h >= 150 && h < 180) return 'Teal';
-//     if (h >= 180 && h < 240) return 'Blue';
-//     if (h >= 240 && h < 290) return 'Purple';
-//     if (h >= 290 && h < 330) return 'Pink';
-//     return 'Red'; // h >= 330 to 360
 //   }
 //
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       appBar: AppBar(title: const Text("Color Patches")),
-//       body: GridView.builder(
-//         padding: const EdgeInsets.all(12),
-//         itemCount: sortedColors.length,
-//         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//           crossAxisCount: 5,
-//           mainAxisSpacing: 8,
-//           crossAxisSpacing: 8,
-//           childAspectRatio: 1,
+//       appBar: AppBar(
+//         title: const Text('Enter Color Hex Codes'),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           children: [
+//             TextField(
+//               controller: _textEditingController,
+//               decoration: const InputDecoration(
+//                 labelText: 'Enter hex color codes (e.g., #FF0000, #00FF00)',
+//                 hintText: 'Enter colors to see them on a color wheel!',
+//                 border: OutlineInputBorder(),
+//               ),
+//               maxLines: 10,
+//             ),
+//             const SizedBox(height: 16.0),
+//             ElevatedButton(
+//               onPressed: _processInput,
+//               child: const Text('Show Color Circle'),
+//             ),
+//             const SizedBox(height: 16.0),
+//             Text('Number of colors entered: ${_inputHexColors.length}'),
+//           ],
 //         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class HSLColorData {
+//   final Color color;
+//   final double h;
+//   final double s;
+//   final double l;
+//   final String hexString;
+//   final int index;
+//
+//   HSLColorData({
+//     required this.color,
+//     required this.h,
+//     required this.s,
+//     required this.l,
+//     required this.hexString,
+//     required this.index,
+//   });
+// }
+//
+// class ColorConverter {
+//   static HSLColorData rgbToHsl(Color color, String hexString, int index) {
+//     double r = color.red / 255.0;
+//     double g = color.green / 255.0;
+//     double b = color.blue / 255.0;
+//
+//     double max = [r, g, b].reduce((a, b) => a > b ? a : b);
+//     double min = [r, g, b].reduce((a, b) => a < b ? a : b);
+//
+//     double h = 0.0;
+//     double s = 0.0;
+//     double l = (max + min) / 2.0;
+//
+//     if (max == min) {
+//       h = s = 0.0;
+//     } else {
+//       double d = max - min;
+//       s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
+//
+//       if (max == r) {
+//         h = (g - b) / d + (g < b ? 6.0 : 0.0);
+//       } else if (max == g) {
+//         h = (b - r) / d + 2.0;
+//       } else if (max == b) {
+//         h = (r - g) / d + 4.0;
+//       }
+//       h /= 6.0;
+//     }
+//
+//     return HSLColorData(
+//       color: color,
+//       h: h * 360.0,
+//       s: s,
+//       l: l,
+//       hexString: hexString,
+//       index: index,
+//     );
+//   }
+//
+//   static Color hexToColor(String hexString) {
+//     String formattedHex = hexString.replaceAll("#", "");
+//     if (formattedHex.length == 6) {
+//       formattedHex = "FF$formattedHex";
+//     }
+//     try {
+//       return Color(int.parse(formattedHex, radix: 16));
+//     } catch (e) {
+//       print('Error parsing hex color $hexString: $e');
+//       return Colors.red;
+//     }
+//   }
+// }
+//
+// class ColorCircleDisplayScreen extends StatefulWidget {
+//   final List<String> hexColors;
+//
+//   const ColorCircleDisplayScreen({Key? key, required this.hexColors}) : super(key: key);
+//
+//   @override
+//   State<ColorCircleDisplayScreen> createState() => _ColorCircleDisplayScreenState();
+// }
+//
+// class _ColorCircleDisplayScreenState extends State<ColorCircleDisplayScreen> {
+//   List<HSLColorData> _colors = [];
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadColors();
+//   }
+//
+//   void _loadColors() {
+//     _colors = [];
+//     for (int i = 0; i < widget.hexColors.length; i++) {
+//       final hex = widget.hexColors[i];
+//       _colors.add(ColorConverter.rgbToHsl(ColorConverter.hexToColor(hex), hex, i + 1));
+//     }
+//     setState(() {});
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Color Wheel (${widget.hexColors.length} colors)'),
+//       ),
+//       body: SingleChildScrollView(
+//         child: Column(
+//           children: [
+//             // Color Wheel
+//             Container(
+//               padding: const EdgeInsets.all(20),
+//               child: LayoutBuilder(
+//                 builder: (context, constraints) {
+//                   final size = math.min(constraints.maxWidth, 650.0);
+//                   return Center(
+//                     child: SizedBox(
+//                       width: size,
+//                       height: size,
+//                       child: CustomPaint(
+//                         painter: ColorCirclePainter(colors: _colors),
+//                       ),
+//                     ),
+//                   );
+//                 },
+//               ),
+//             ),
+//             const Divider(thickness: 2),
+//             // Color List
+//             Padding(
+//               padding: const EdgeInsets.all(16.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   const Text(
+//                     'Color List',
+//                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//                   ),
+//                   const SizedBox(height: 16),
+//                   ListView.builder(
+//                     shrinkWrap: true,
+//                     physics: const NeverScrollableScrollPhysics(),
+//                     itemCount: _colors.length,
+//                     itemBuilder: (context, index) {
+//                       final colorData = _colors[index];
+//                       return Card(
+//                         margin: const EdgeInsets.only(bottom: 8),
+//                         child: ListTile(
+//                           leading: CircleAvatar(
+//                             backgroundColor: colorData.color,
+//                             child: Text(
+//                               '${colorData.index}',
+//                               style: TextStyle(
+//                                 color: colorData.l > 0.5 ? Colors.black : Colors.white,
+//                                 fontWeight: FontWeight.bold,
+//                               ),
+//                             ),
+//                           ),
+//                           title: Text(
+//                             colorData.hexString,
+//                             style: const TextStyle(fontWeight: FontWeight.bold),
+//                           ),
+//                           subtitle: Text(
+//                             'H: ${colorData.h.toStringAsFixed(0)}° S: ${(colorData.s * 100).toStringAsFixed(0)}% L: ${(colorData.l * 100).toStringAsFixed(0)}%',
+//                           ),
+//                           trailing: Container(
+//                             width: 50,
+//                             height: 50,
+//                             decoration: BoxDecoration(
+//                               color: colorData.color,
+//                               border: Border.all(color: Colors.black26, width: 2),
+//                               borderRadius: BorderRadius.circular(8),
+//                             ),
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class ColorCirclePainter extends CustomPainter {
+//   final List<HSLColorData> colors;
+//
+//   ColorCirclePainter({required this.colors});
+//
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final center = Offset(size.width / 2, size.height / 2);
+//     final maxRadius = math.min(size.width, size.height) / 2;
+//
+//     // Draw color wheel gradient background
+//     final rect = Rect.fromCircle(center: center, radius: maxRadius);
+//
+//     // Create radial gradient for saturation (from white center to saturated edge)
+//     final saturationGradient = Paint()
+//       ..shader = RadialGradient(
+//         colors: [Colors.white, Colors.white.withOpacity(0)],
+//         stops: [0.0, 1.0],
+//       ).createShader(rect);
+//
+//     // Draw hue wheel segments
+//     const segmentCount = 360;
+//     for (int i = 0; i < segmentCount; i++) {
+//       final startAngle = (i - 90) * math.pi / 180;
+//       final sweepAngle = (1) * math.pi / 180;
+//       final hue = i.toDouble();
+//
+//       final color = HSVColor.fromAHSV(1.0, hue, 1.0, 1.0).toColor();
+//       final paint = Paint()
+//         ..color = color
+//         ..style = PaintingStyle.fill;
+//
+//       final path = Path()
+//         ..moveTo(center.dx, center.dy)
+//         ..arcTo(rect, startAngle, sweepAngle, false)
+//         ..close();
+//
+//       canvas.drawPath(path, paint);
+//     }
+//
+//     // Draw saturation gradient overlay (white in center fading out)
+//     canvas.drawCircle(center, maxRadius, saturationGradient);
+//
+//     // Draw border
+//     final borderPaint = Paint()
+//       ..color = Colors.black26
+//       ..style = PaintingStyle.stroke
+//       ..strokeWidth = 3;
+//     canvas.drawCircle(center, maxRadius, borderPaint);
+//
+//     const circleSize = 14.0;
+//     const minSpacing = circleSize * 2.5;
+//
+//     List<Offset> placedPositions = [];
+//
+//     // Sort colors by hue, then saturation
+//     List<HSLColorData> sortedColors = List.from(colors);
+//     sortedColors.sort((a, b) {
+//       int hueCompare = a.h.compareTo(b.h);
+//       if (hueCompare != 0) return hueCompare;
+//       return a.s.compareTo(b.s);
+//     });
+//
+//     // Place each color without overlap
+//     for (var colorData in sortedColors) {
+//       Offset? finalPosition;
+//
+//       double baseRadius = colorData.s * (maxRadius - 40);
+//       double angleRad = (colorData.h - 90) * math.pi / 180;
+//
+//       for (int radiusAttempt = 0; radiusAttempt < 10; radiusAttempt++) {
+//         double testRadius = baseRadius + (radiusAttempt * 25);
+//
+//         if (testRadius > maxRadius - 30) continue;
+//
+//         for (int angleAttempt = 0; angleAttempt < 12; angleAttempt++) {
+//           double angleOffset = (angleAttempt * 5) * math.pi / 180;
+//           double testAngle = angleRad + (angleAttempt % 2 == 0 ? angleOffset : -angleOffset);
+//
+//           double x = center.dx + testRadius * math.cos(testAngle);
+//           double y = center.dy + testRadius * math.sin(testAngle);
+//           Offset testPosition = Offset(x, y);
+//
+//           bool hasOverlap = false;
+//           for (var placedPos in placedPositions) {
+//             double distance = math.sqrt(
+//                 math.pow(testPosition.dx - placedPos.dx, 2) +
+//                     math.pow(testPosition.dy - placedPos.dy, 2)
+//             );
+//             if (distance < minSpacing) {
+//               hasOverlap = true;
+//               break;
+//             }
+//           }
+//
+//           if (!hasOverlap) {
+//             finalPosition = testPosition;
+//             break;
+//           }
+//         }
+//
+//         if (finalPosition != null) break;
+//       }
+//
+//       if (finalPosition == null) {
+//         double x = center.dx + baseRadius * math.cos(angleRad);
+//         double y = center.dy + baseRadius * math.sin(angleRad);
+//         finalPosition = Offset(x, y);
+//       }
+//
+//       placedPositions.add(finalPosition);
+//
+//       // Draw color circle (the actual color)
+//       final colorPaint = Paint()
+//         ..color = colorData.color
+//         ..style = PaintingStyle.fill;
+//       canvas.drawCircle(finalPosition, circleSize, colorPaint);
+//
+//       // Draw black border around color
+//       final circleBorderPaint = Paint()
+//         ..color = Colors.black87
+//         ..style = PaintingStyle.stroke
+//         ..strokeWidth = 2;
+//       canvas.drawCircle(finalPosition, circleSize, circleBorderPaint);
+//
+//       // Draw number on top with white background circle
+//       final numberBgSize = circleSize * 0.6;
+//       final numberBgPaint = Paint()
+//         ..color = Colors.white
+//         ..style = PaintingStyle.fill;
+//       canvas.drawCircle(finalPosition, numberBgSize, numberBgPaint);
+//
+//       // Draw number in black
+//       final textPainter = TextPainter(
+//         text: TextSpan(
+//           text: '${colorData.index}',
+//           style: const TextStyle(
+//             color: Colors.black,
+//             fontSize: 9,
+//             fontWeight: FontWeight.bold,
+//           ),
+//         ),
+//         textDirection: TextDirection.ltr,
+//       );
+//       textPainter.layout();
+//       textPainter.paint(
+//         canvas,
+//         Offset(
+//           finalPosition.dx - textPainter.width / 2,
+//           finalPosition.dy - textPainter.height / 2,
+//         ),
+//       );
+//     }
+//   }
+//
+//   @override
+//   bool shouldRepaint(ColorCirclePainter oldDelegate) {
+//     return oldDelegate.colors != colors;
+//   }
+// }
+// import 'package:flutter/material.dart';
+//
+// void main() {
+//   runApp(const ColorGridApp());
+// }
+//
+// class ColorGridApp extends StatelessWidget {
+//   const ColorGridApp({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Color Grid',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: const ColorInputScreen(),
+//     );
+//   }
+// }
+//
+// class ColorInputScreen extends StatefulWidget {
+//   const ColorInputScreen({Key? key}) : super(key: key);
+//
+//   @override
+//   State<ColorInputScreen> createState() => _ColorInputScreenState();
+// }
+//
+// class _ColorInputScreenState extends State<ColorInputScreen> {
+//   final TextEditingController _textEditingController = TextEditingController();
+//   List<String> _inputHexColors = [];
+//
+//   void _processInput() {
+//     setState(() {
+//       _inputHexColors = _textEditingController.text
+//           .split(',')
+//           .map((s) => s.trim())
+//           .where((s) => s.isNotEmpty && s.startsWith('#') && (s.length == 7 || s.length == 9))
+//           .toList();
+//     });
+//
+//     if (_inputHexColors.isNotEmpty) {
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => ColorGridDisplayScreen(hexColors: _inputHexColors),
+//         ),
+//       );
+//     } else {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('Please enter valid hex color codes separated by commas.')),
+//       );
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Enter Color Hex Codes'),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           children: [
+//             TextField(
+//               controller: _textEditingController,
+//               decoration: const InputDecoration(
+//                 labelText: 'Enter hex color codes (e.g., #FF0000, #00FF00)',
+//                 hintText: 'Enter colors to arrange them!',
+//                 border: OutlineInputBorder(),
+//               ),
+//               maxLines: 10,
+//             ),
+//             const SizedBox(height: 16.0),
+//             ElevatedButton(
+//               onPressed: _processInput,
+//               child: const Text('Show Colors'),
+//             ),
+//             const SizedBox(height: 16.0),
+//             Text('Number of colors entered: ${_inputHexColors.length}'),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class HSLColorData {
+//   final Color color;
+//   final double h;
+//   final double s;
+//   final double l;
+//   final String hexString;
+//
+//   HSLColorData({
+//     required this.color,
+//     required this.h,
+//     required this.s,
+//     required this.l,
+//     required this.hexString,
+//   });
+// }
+//
+// class ColorConverter {
+//   static HSLColorData rgbToHsl(Color color, String hexString) {
+//     double r = color.red / 255.0;
+//     double g = color.green / 255.0;
+//     double b = color.blue / 255.0;
+//
+//     double max = [r, g, b].reduce((a, b) => a > b ? a : b);
+//     double min = [r, g, b].reduce((a, b) => a < b ? a : b);
+//
+//     double h = 0.0;
+//     double s = 0.0;
+//     double l = (max + min) / 2.0;
+//
+//     if (max == min) {
+//       h = s = 0.0;
+//     } else {
+//       double d = max - min;
+//       s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
+//
+//       if (max == r) {
+//         h = (g - b) / d + (g < b ? 6.0 : 0.0);
+//       } else if (max == g) {
+//         h = (b - r) / d + 2.0;
+//       } else if (max == b) {
+//         h = (r - g) / d + 4.0;
+//       }
+//       h /= 6.0;
+//     }
+//
+//     return HSLColorData(
+//       color: color,
+//       h: h * 360.0,
+//       s: s,
+//       l: l,
+//       hexString: hexString,
+//     );
+//   }
+//
+//   static Color hexToColor(String hexString) {
+//     String formattedHex = hexString.replaceAll("#", "");
+//     if (formattedHex.length == 6) {
+//       formattedHex = "FF$formattedHex";
+//     }
+//     try {
+//       return Color(int.parse(formattedHex, radix: 16));
+//     } catch (e) {
+//       print('Error parsing hex color $hexString: $e');
+//       return Colors.red;
+//     }
+//   }
+// }
+//
+// class ColorGridDisplayScreen extends StatefulWidget {
+//   final List<String> hexColors;
+//
+//   const ColorGridDisplayScreen({Key? key, required this.hexColors}) : super(key: key);
+//
+//   @override
+//   State<ColorGridDisplayScreen> createState() => _ColorGridDisplayScreenState();
+// }
+//
+// class _ColorGridDisplayScreenState extends State<ColorGridDisplayScreen> {
+//   List<HSLColorData> _colors = [];
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadColors();
+//   }
+//
+//   void _loadColors() {
+//     _colors = [];
+//     for (int i = 0; i < widget.hexColors.length; i++) {
+//       final hex = widget.hexColors[i];
+//       _colors.add(ColorConverter.rgbToHsl(ColorConverter.hexToColor(hex), hex));
+//     }
+//     // Sort by hue, then lightness, then saturation
+//     _colors.sort((a, b) {
+//       int hueCompare = a.h.compareTo(b.h);
+//       if (hueCompare != 0) return hueCompare;
+//       int lightnessCompare = b.l.compareTo(a.l);
+//       if (lightnessCompare != 0) return lightnessCompare;
+//       return b.s.compareTo(a.s);
+//     });
+//     setState(() {});
+//   }
+//
+//   void _onReorder(int oldIndex, int newIndex) {
+//     setState(() {
+//       if (newIndex > oldIndex) {
+//         newIndex -= 1;
+//       }
+//       final item = _colors.removeAt(oldIndex);
+//       _colors.insert(newIndex, item);
+//     });
+//   }
+//
+//   void _printColors() {
+//     final hashCodes = _colors.map((c) => c.hexString).join(', ');
+//     print('Rearranged colors: $hashCodes');
+//
+//     showDialog(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         title: const Text('Rearranged Color Codes'),
+//         content: SingleChildScrollView(
+//           child: SelectableText(
+//             hashCodes,
+//             style: const TextStyle(fontSize: 12),
+//           ),
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () => Navigator.pop(context),
+//             child: const Text('Close'),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   void _showColorDialog(HSLColorData colorData) {
+//     showDialog(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         title: const Text('Color Details'),
+//         content: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Container(
+//               width: 100,
+//               height: 100,
+//               decoration: BoxDecoration(
+//                 color: colorData.color,
+//                 border: Border.all(color: Colors.black26, width: 2),
+//                 borderRadius: BorderRadius.circular(8),
+//               ),
+//             ),
+//             const SizedBox(height: 16),
+//             SelectableText(
+//               colorData.hexString,
+//               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//             ),
+//             const SizedBox(height: 8),
+//             Text('Hue: ${colorData.h.toStringAsFixed(1)}°'),
+//             Text('Saturation: ${(colorData.s * 100).toStringAsFixed(1)}%'),
+//             Text('Lightness: ${(colorData.l * 100).toStringAsFixed(1)}%'),
+//             Text('RGB: ${colorData.color.red}, ${colorData.color.green}, ${colorData.color.blue}'),
+//           ],
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () => Navigator.pop(context),
+//             child: const Text('Close'),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Color Grid (${widget.hexColors.length} colors)'),
+//         actions: [
+//           IconButton(
+//             icon: const Icon(Icons.print),
+//             onPressed: _printColors,
+//             tooltip: 'Print hash codes',
+//           ),
+//           IconButton(
+//             icon: const Icon(Icons.sort),
+//             onPressed: _loadColors,
+//             tooltip: 'Re-sort colors',
+//           ),
+//         ],
+//       ),
+//       body: ReorderableListView.builder(
+//         scrollDirection: Axis.horizontal,
+//         padding: const EdgeInsets.all(16),
+//         itemCount: _colors.length,
+//         onReorder: _onReorder,
 //         itemBuilder: (context, index) {
-//           final color = sortedColors[index];
-//           return Container(
-//             color: color,
-//             child: Center(
-//               child: Text(
-//                 '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase().substring(2)}',
-//                 style: TextStyle(
-//                   color: color.computeLuminance() > 0.5
-//                       ? Colors.black
-//                       : Colors.white,
-//                   fontSize: 10,
-//                 ),
+//           final colorData = _colors[index];
+//           return GestureDetector(
+//             key: ValueKey('${colorData.hexString}_$index'),
+//             onTap: () => _showColorDialog(colorData),
+//             child: Container(
+//               width: 80,
+//               margin: const EdgeInsets.symmetric(horizontal: 2),
+//               decoration: BoxDecoration(
+//                 color: colorData.color,
+//                 border: Border.all(color: Colors.black26, width: 1),
+//               ),
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Text(
+//                     colorData.hexString.substring(0, 7),
+//                     style: TextStyle(
+//                       color: colorData.l > 0.5 ? Colors.black : Colors.white,
+//                       fontSize: 10,
+//                       fontWeight: FontWeight.bold,
+//                       shadows: [
+//                         Shadow(
+//                           color: colorData.l > 0.5 ? Colors.white : Colors.black,
+//                           blurRadius: 2,
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                   const SizedBox(height: 8),
+//                   Icon(
+//                     Icons.drag_handle,
+//                     size: 20,
+//                     color: colorData.l > 0.5 ? Colors.black38 : Colors.white38,
+//                   ),
+//                 ],
 //               ),
 //             ),
 //           );
@@ -1346,224 +1075,3 @@
 //     );
 //   }
 // }
-import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-void main() {
-  runApp(const MaterialApp(home: ColorGridScreen()));
-}
-
-class ColorGridScreen extends StatefulWidget {
-  const ColorGridScreen({super.key});
-
-  @override
-  State<ColorGridScreen> createState() => _ColorGridScreenState();
-}
-
-class _ColorGridScreenState extends State<ColorGridScreen> {
-  List<Color> savedColors = [];
-  Set<String> selectedHexColors = {};
-
-  @override
-  void initState() {
-    super.initState();
-    loadFromPrefs();
-  }
-
-  Future<void> loadFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final colorHexList = prefs.getStringList('colors') ?? [];
-    final selectedList = prefs.getStringList('selected') ?? [];
-
-    setState(() {
-      savedColors = colorHexList
-          .map((hex) => Color(int.parse(hex, radix: 16)))
-          .toList();
-      selectedHexColors = selectedList.toSet();
-    });
-  }
-
-  Future<void> saveToPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final hexList = savedColors
-        .map((c) => c.value.toRadixString(16).padLeft(8, '0'))
-        .toList();
-    prefs.setStringList('colors', hexList);
-    prefs.setStringList('selected', selectedHexColors.toList());
-  }
-
-  void addColorDialog() {
-    Color selectedColor = Colors.blue;
-    TextEditingController hexController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Add Color'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ColorPicker(
-              pickerColor: selectedColor,
-              onColorChanged: (color) {
-                selectedColor = color;
-                hexController.text =
-                '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
-              },
-            ),
-            TextField(
-              controller: hexController,
-              decoration: const InputDecoration(labelText: "Hex Code"),
-              onChanged: (value) {
-                try {
-                  value = value.replaceAll('#', '');
-                  if (value.length == 6) value = 'FF$value'; // add alpha
-                  selectedColor = Color(int.parse(value, radix: 16));
-                } catch (_) {}
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                savedColors.add(selectedColor);
-              });
-              saveToPrefs();
-              Navigator.pop(context);
-            },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void deleteColor(int index) {
-    final color = savedColors[index];
-    final hex = color.value.toRadixString(16).padLeft(8, '0');
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Delete Color'),
-        content: const Text('Are you sure you want to delete this color?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                savedColors.removeAt(index);
-                selectedHexColors.remove(hex);
-              });
-              saveToPrefs();
-              Navigator.pop(context);
-            },
-            child: const Text('Yes'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void printSelectedColors() {
-    debugPrint('Selected Colors:');
-    for (var hex in selectedHexColors) {
-      debugPrint('#$hex');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Color Grid'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: addColorDialog,
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(10),
-              itemCount: savedColors.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemBuilder: (context, index) {
-                final color = savedColors[index];
-                final hex = color.value.toRadixString(16).padLeft(8, '0');
-                final isSelected = selectedHexColors.contains(hex);
-
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (isSelected) {
-                        selectedHexColors.remove(hex);
-                      } else {
-                        selectedHexColors.add(hex);
-                      }
-                    });
-                    saveToPrefs();
-                  },
-                  child: Card(
-                    color: color,
-                    shape: RoundedRectangleBorder(
-                      side: isSelected
-                          ? const BorderSide(color: Colors.black, width: 3)
-                          : BorderSide.none,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          right: 4,
-                          top: 4,
-                          child: InkWell(
-                            onTap: () => deleteColor(index),
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                              ),
-                              child: const Icon(Icons.close,
-                                  size: 16, color: Colors.red),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: ElevatedButton.icon(
-              onPressed: printSelectedColors,
-              icon: const Icon(Icons.print),
-              label: const Text("Print Selected Colors"),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
