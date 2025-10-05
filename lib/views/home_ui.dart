@@ -21,57 +21,58 @@ class HomeUi extends StatefulWidget {
   State<HomeUi> createState() => _HomeUiState();
 }
 
+List<int> colorsList = [
+  0xFF8DB600,
+  0xFF7FFFD4,
+  0xFF000000,
+  0xFFFFB6C1,
+  0xFFCC7722,
+  0xFFFFEF00,
+  0xFF960018,
+  0xFF7FFF00,
+  0xFFFFFDD0,
+  0xFFDC143C,
+  0xFF654321,
+  0xFF013220,
+  0xFF674C47,
+  0xFFB06500,
+  0xFFDAA520,
+  0xFF7CFC00,
+  0xFFC4C3D0,
+  0xFF3F00FF,
+  0xFF8FE3D1,
+  0xFFFFDAB9,
+  0xFFD2B48C,
+  0xFFBFFF00,
+  0xFF90CEE1,
+  0xFFFF00FF,
+  0xFFD4AF37,
+  0xFFC0C0C0,
+  0xFFC54B8C,
+  0xFF708238,
+  0xFFFFA500,
+  0xFFE6674B,
+  0xFFBDA0CB,
+  0xFFFFE5B4,
+  0xFF006994,
+  0xFFFFC0CB,
+  0xFFFF4500,
+  0xFFFE2712,
+  0xFF882D17,
+  0xFFE86100,
+  0xFF00FF7F,
+  0xFF0073CF,
+  0xFF009F6B,
+  0xFF7C4848,
+  0xFF3F00FF,
+  0xFF8F00FF,
+  0xFF324AB2,
+  0xFFFFFFFF,
+  0xFFC39953,
+  0xFFFFAA1D,
+];
+
 class _HomeUiState extends State<HomeUi> {
-  List<int> colorsList = [
-    0xFF8DB600,
-    0xFF7FFFD4,
-    0xFF000000,
-    0xFFFFB6C1,
-    0xFFCC7722,
-    0xFFFFEF00,
-    0xFF960018,
-    0xFF7FFF00,
-    0xFFFFFDD0,
-    0xFFDC143C,
-    0xFF654321,
-    0xFF013220,
-    0xFF674C47,
-    0xFFB06500,
-    0xFFDAA520,
-    0xFF7CFC00,
-    0xFFC4C3D0,
-    0xFF3F00FF,
-    0xFF8FE3D1,
-    0xFFFFDAB9,
-    0xFFD2B48C,
-    0xFFBFFF00,
-    0xFF90CEE1,
-    0xFFFF00FF,
-    0xFFD4AF37,
-    0xFFC0C0C0,
-    0xFFC54B8C,
-    0xFF708238,
-    0xFFFFA500,
-    0xFFE6674B,
-    0xFFBDA0CB,
-    0xFFFFE5B4,
-    0xFF006994,
-    0xFFFFC0CB,
-    0xFFFF4500,
-    0xFFFE2712,
-    0xFF882D17,
-    0xFFE86100,
-    0xFF00FF7F,
-    0xFF0073CF,
-    0xFF009F6B,
-    0xFF7C4848,
-    0xFF3F00FF,
-    0xFF8F00FF,
-    0xFF324AB2,
-    0xFFFFFFFF,
-    0xFFC39953,
-    0xFFFFAA1D,
-  ];
   File? image;
 
   img.Image? reducedImage;
@@ -136,7 +137,8 @@ class _HomeUiState extends State<HomeUi> {
   Future<Uint8List> _generateImageFromColors(
     List<List<Color>> gridColors,
     double tileSize,
-  ) async {
+  ) async
+  {
     final int numRows = gridColors.length;
     final int numCols =
         gridColors[0].length; // Assuming all rows have same number of columns
@@ -229,12 +231,12 @@ class _HomeUiState extends State<HomeUi> {
           for (int x = 0; x < reducedImage!.width; x++) {
             final pixel = reducedImage!.getPixel(x, y);
             listTemp.add(
-              Color.fromARGB(
+              findNearestColor(Color.fromARGB(
                 255,
                 pixel.r.toInt(),
                 pixel.g.toInt(),
                 pixel.b.toInt(),
-              ),
+              ))
             );
           }
           circleColorsGrid.add(listTemp);
@@ -421,6 +423,15 @@ class _HomeUiState extends State<HomeUi> {
                 onPressed: _processAndDownloadImage,
                 child: const Text('Generate and Download Image'),
               ),
+            //---------------------------------------
+
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: colorsList.map((e) => Container(margin: EdgeInsets.all(10),decoration: BoxDecoration(border: Border.all(color:
+                Colors.black, width: 1.5),color: Color(e), ), height: 50, width: 50, ),).toList(),
+              ),
+            ),
           ],
         ),
       ),
@@ -428,10 +439,33 @@ class _HomeUiState extends State<HomeUi> {
   }
 }
 
+Color findNearestColor(Color sourceColor) {
+  double minDistance = double.infinity;
+  Color nearestColor = Color(colorsList[0]);
+
+  for (int colorValue in colorsList) {
+    Color targetColor = Color(colorValue);
+
+    // Calculate Euclidean distance in RGB space
+    double distance = sqrt(
+      pow(sourceColor.red - targetColor.red, 2) +
+          pow(sourceColor.green - targetColor.green, 2) +
+          pow(sourceColor.blue - targetColor.blue, 2),
+    );
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestColor = targetColor;
+    }
+  }
+
+  return nearestColor;
+}
 class PixelPainter extends CustomPainter {
   final img.Image image;
 
   PixelPainter(this.image);
+
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -448,17 +482,15 @@ class PixelPainter extends CustomPainter {
       for (int x = 0; x < image.width; x++) {
         final pixel = image.getPixel(x, y); // returns a Pixel object
 
-        final r = pixel.r;
-        final g = pixel.g;
-        final b = pixel.b;
-        final a = pixel.a;
-
-        paint.color = Color.fromARGB(
-          a.toInt(),
-          r.toInt(),
-          g.toInt(),
-          b.toInt(),
+        final sourceColor = Color.fromARGB(
+          255,
+          pixel.r.toInt(),
+          pixel.g.toInt(),
+          pixel.b.toInt(),
         );
+
+        // Find the nearest matching color from our palette
+        paint.color = findNearestColor(sourceColor);
 
         final rect = Rect.fromLTWH(
           x * pixelWidth,

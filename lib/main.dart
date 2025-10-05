@@ -6,6 +6,198 @@ Future<void> main() async {
   runApp(MaterialApp(home: const HomeUi()));
 }
 
+// import 'dart:typed_data';
+// import 'dart:ui' as ui;
+// import 'dart:convert';
+//
+// import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart';
+// import 'package:flutter/foundation.dart';
+//
+// import 'dart:html' as html;
+//
+//
+// void main() {
+//   runApp(const MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: '2D Circle Grid Download',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: const SmoothCircleGridScreen(),
+//     );
+//   }
+// }
+//
+// class SmoothCircleGridScreen extends StatefulWidget {
+//   const SmoothCircleGridScreen({super.key});
+//
+//   @override
+//   _SmoothCircleGridScreenState createState() => _SmoothCircleGridScreenState();
+// }
+//
+// class _SmoothCircleGridScreenState extends State<SmoothCircleGridScreen> {
+//   final GlobalKey _gridKey = GlobalKey();
+//
+//   final List<List<Color>> _circleColorsGrid = [
+//     [Colors.red, Colors.green, Colors.blue, Colors.purple],
+//     [Colors.orange, Colors.teal, Colors.pink, Colors.brown],
+//     [Colors.amber, Colors.cyan, Colors.indigo, Colors.lime],
+//     [Colors.red, Colors.green, Colors.blue, Colors.purple],
+//   ];
+//
+//   static const double _circleTileSize = 10.0;
+//
+//   Future<void> _captureAndDownloadImage() async {
+//     try {
+//       RenderRepaintBoundary? boundary =
+//       _gridKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+//
+//       if (boundary == null) {
+//         if (mounted) {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(content: Text('Could not find render object.')),
+//           );
+//         }
+//         return;
+//       }
+//
+//       ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+//
+//       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+//       if (byteData == null) {
+//         if (mounted) {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(content: Text('Failed to convert image to bytes.')),
+//           );
+//         }
+//         return;
+//       }
+//
+//       Uint8List pngBytes = byteData.buffer.asUint8List();
+//
+//       if (kIsWeb) {
+//         final base64data = base64Encode(pngBytes);
+//         final fileName = 'circle_grid_${DateTime.now().millisecondsSinceEpoch}.png';
+//
+//         final anchor = html.AnchorElement(
+//           href: 'data:image/png;base64,$base64data',
+//         )..setAttribute('download', fileName);
+//
+//         html.document.body?.append(anchor);
+//         anchor.click();
+//         anchor.remove();
+//
+//         if (mounted) {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             SnackBar(content: Text('Image "$fileName" downloaded successfully!')),
+//           );
+//         }
+//       } else {
+//         if (mounted) {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(content: Text('Downloading is only supported on web in this example.')),
+//           );
+//         }
+//       }
+//     } catch (e) {
+//       if (mounted) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Error capturing or downloading image: $e')),
+//         );
+//       }
+//       print('Error capturing or downloading image: $e');
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('2D Circle Grid (No Padding)'),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             // RepaintBoundary captures the visual output of its child
+//             RepaintBoundary(
+//               key: _gridKey,
+//               // The white background is moved here to ensure the captured image has a background
+//               // If you want a transparent background, change this to Colors.transparent
+//               child: Container(
+//                 color: Colors.white,
+//                 child: Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   // We use MainAxisSize.min to ensure the Column only takes up as much space as its children
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: _circleColorsGrid.map((rowColors) {
+//                     return Row(
+//                       mainAxisAlignment: MainAxisAlignment.center,
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: rowColors.map((color) {
+//                         // The Container no longer has margin or decoration (border)
+//                         return Container(
+//                           width: _circleTileSize,
+//                           height: _circleTileSize,
+//                           child: CustomPaint(
+//                             painter: CircleRatioPainter(outerCircleColor: color),
+//                           ),
+//                         );
+//                       }).toList(),
+//                     );
+//                   }).toList(),
+//                 ),
+//               ),
+//             ),
+//             // The SizedBox for spacing is removed
+//             ElevatedButton(
+//               onPressed: _captureAndDownloadImage,
+//               child: const Text('Download Grid as Image (Web Only)'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// // Our CustomPainter class remains exactly the same
+// class CircleRatioPainter extends CustomPainter {
+//   final Color outerCircleColor;
+//
+//   CircleRatioPainter({required this.outerCircleColor});
+//
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final Offset center = Offset(size.width / 2, size.height / 2);
+//     final double maxRadius = size.shortestSide / 2;
+//
+//     final double outerCircleRadius = maxRadius;
+//     final Paint outerPaint = Paint()
+//       ..color = outerCircleColor
+//       ..style = PaintingStyle.fill;
+//     canvas.drawCircle(center, outerCircleRadius, outerPaint);
+//
+//     final double innerCircleRadius = outerCircleRadius / 3;
+//     final Paint innerPaint = Paint()
+//       ..color = Colors.white
+//       ..style = PaintingStyle.fill;
+//     canvas.drawCircle(center, innerCircleRadius, innerPaint);
+//   }
+//
+//   @override
+//   bool shouldRepaint(covariant CircleRatioPainter oldDelegate) {
+//     return oldDelegate.outerCircleColor != outerCircleColor;
+//   }
+// }
 // import 'package:flutter/material.dart';
 // import 'package:collection/collection.dart'; // For more advanced list operations if needed
 //
